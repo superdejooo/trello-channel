@@ -1,5 +1,5 @@
 {
-    "name": "laravel-notification-channels/trello",
+    "name": "superdejooo/laravel-notification-channel-trello",
     "description": "Trello Notifications driver",
     "homepage": "https://github.com/laravel-notification-channels/trello",
     "license": "MIT",
