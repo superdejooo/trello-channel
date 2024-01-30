@@ -50,6 +50,7 @@ class TrelloChannel
             'form_params' => Arr::set($trelloParameters, 'idList', $idList),
         ]);
 
+
         if ($response->getStatusCode() !== 200) {
             throw CouldNotSendNotification::serviceRespondedWithAnError($response);
         }
