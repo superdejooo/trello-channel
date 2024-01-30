@@ -23,18 +23,15 @@ class TrelloChannel
     }
 
     /**
-     * Send the given notification.
-     *
-     * @param  mixed  $notifiable
-     * @param  \Illuminate\Notifications\Notification  $notification
-     *
-     * @throws \NotificationChannels\Trello\Exceptions\InvalidConfiguration
-     * @throws \NotificationChannels\Trello\Exceptions\CouldNotSendNotification
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @param $notifiable
+     * @param Notification $notification
+     * @return void
+     * @throws CouldNotSendNotification
+     * @throws InvalidConfiguration
      */
     public function send($notifiable, Notification $notification): void
     {
-        if (! $routing = collect($notifiable->routeNotificationFor('Trello'))) {
+        if (!$routing = collect($notifiable->routeNotificationFor('Trello'))) {
             return;
         }
 
@@ -46,12 +43,16 @@ class TrelloChannel
 
         $trelloParameters = $notification->toTrello($notifiable)->toArray();
 
-        $response = $this->client->post(self::API_ENDPOINT.'?key='.$key.'&token='.$routing->get('token'), [
-            'form_params' => Arr::set($trelloParameters, 'idList', $routing->get('idList')),
+        $token = $routing->get('token') ?? config('services.trello.token');
+        $idList = $routing->get('idList') ?? config('services.trello.idList');
+
+        $response = $this->client->post(self::API_ENDPOINT . '?key=' . $key . '&token=' . $token, [
+            'form_params' => Arr::set($trelloParameters, 'idList', $idList),
         ]);
 
         if ($response->getStatusCode() !== 200) {
             throw CouldNotSendNotification::serviceRespondedWithAnError($response);
         }
     }
+
 }
